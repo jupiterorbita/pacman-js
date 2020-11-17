@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      body * {
+        /* outline: 1px solid red; */
+      }
+      body {
+        background-color: black;
+        margin: 0;
+        padding: 0;
+      }
+      /* h1 {
+        color: white;
+      } */
+      /* reset divs spacing */
+      div {
+        line-height: 0;
+      }
+
+      div.row div {
+        width: 20px;
+        height: 20px;
+        /* border: 1px solid black; */
+        display: inline-block;
+      }
+      div.brick {
+        background-color: blue;
+        background-image: url("brick.jpg");
+        background-position: center;
+      }
+      div.coin {
+        /* background: url("coin.gif") no-repeat center; */
+        background-image: url("coin.gif");
+        background-position: center;
+        background-repeat: no-repeat;
+      }
+      div.cherry {
+        background-image: url("cherry2.png");
+        background-size: cover;
+        /* background-position: center;
+        background-repeat: no-repeat; */
+      }
+      div.empty {
+      }
+      div#pacman {
+        /* background: url("coin.gif") no-repeat center; */
+        background-image: url("pacman.gif");
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        width: 20px;
+        height: 20px;
+        position: absolute;
+      }
+      div#ghost {
+        background-image: url("ghost.png");
+        background-size: cover;
+        width: 20px;
+        height: 20px;
+        position: absolute;
+      }
+      div#score {
+        border-radius: 10px;
+        border: 1px solid white;
+        width: 30px;
+        height: 20px;
+        color: white;
+        padding: 7px;
+        text-align: center;
+        line-height: 1;
+        position: absolute;
+        top: 10px;
+        left: 210px;
+      }
+    </style>
+    <title>Pacman 🕹</title>
+  </head>
+  <body>
+    <!-- <h1>Pacman 🎮</h1> -->
+
+    <div id="container">
+      <!-- <div id="ghost"></div> -->
+      <div id="world"></div>
+      <div id="pacman"></div>
+      <div id="ghost"></div>
+      <!-- <div id="pacman" style="top: 20px; left: 20px"></div> -->
+      <div id="score">0</div>
+    </div>
+
+    <script>
+      console.log("Pacman----------------------------------------");
+      // 1. have js display the world of bricks/coin/etc/
+      // 2. have pacman move up and down
+
+      var world = [
+        [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+        [2, 0, 1, 1, 1, 1, 0, 2, 5, 2],
+        [2, 1, 1, 1, 1, 1, 1, 2, 1, 2],
+        [2, 1, 2, 2, 2, 2, 1, 2, 1, 2],
+        [2, 1, 1, 1, 1, 1, 1, 2, 1, 2],
+        [2, 1, 2, 2, 2, 1, 2, 2, 1, 2],
+        [2, 1, 2, 5, 2, 1, 2, 1, 1, 2],
+        [2, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+        [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+      ];
+
+      // function randomGhostStart() {
+      //   if (world[i][j] != 2 ) {
+      //   }
+      //   console.log(Math.random());
+      // }
+      // randomGhostStart();
+
+      function randomGhostMove() {
+        //  top: +1 or -1
+        // left-right: +1 or -1
+      }
+
+      var score = 0;
+      var pacman = {
+        x: 1,
+        y: 1,
+      };
+      var ghost = {
+        x: 5,
+        y: 4,
+      };
+
+      // RESET
+      function resetGame() {
+        ghost = {
+          x: 5,
+          y: 4,
+        };
+        pacman = {
+          x: 1,
+          y: 1,
+        };
+        score = 0;
+        world = [
+          [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+          [2, 0, 1, 1, 1, 1, 0, 2, 5, 2],
+          [2, 1, 1, 1, 1, 1, 1, 2, 1, 2],
+          [2, 1, 2, 2, 2, 2, 1, 2, 1, 2],
+          [2, 1, 1, 1, 1, 1, 1, 2, 1, 2],
+          [2, 1, 2, 2, 2, 1, 2, 2, 1, 2],
+          [2, 1, 2, 5, 2, 1, 2, 1, 1, 2],
+          [2, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+          [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+        ];
+        displayWorld();
+        displayPacman();
+        displaySore();
+        displayGhost();
+      }
+
+      // audio
+      function coinCollectSound() {
+        var audio = new Audio("coin.wav");
+        audio.play();
+      }
+      function coinCollectCherry() {
+        var audio = new Audio("cherry.mp3");
+        audio.play();
+      }
+
+      function displayWorld() {
+        var output = "";
+        // loop thru the world
+        for (var i = 0; i < world.length; i++) {
+          // whenever we go in here we have to add a div.row START
+          output += "\n<div class='row'>\n";
+          for (var j = 0; j < world[i].length; j++) {
+            // output = output + world[i][j];
+            if (world[i][j] == 2) output += "<div class='brick'></div>";
+            else if (world[i][j] == 1) output += "<div class='coin'></div>";
+            else if (world[i][j] == 5) output += "<div class='cherry'></div>";
+            else if (world[i][j] == 0) output += "<div class='empty'></div>";
+            // else if (world[i][j] == 9) output += "<div id='ghost'></div>";
+          }
+          // END div.row div after i++
+          output += "\n</div>";
+        }
+        // console.log(output);
+        // DISPLAY the world in div#world
+        // in the innerHTML replace it with output
+        document.getElementById("world").innerHTML = output;
+      }
+      function displayGhost() {
+        // =============================================
+        // move either top 1 or -1
+        document.getElementById("ghost").style.top = ghost.y * 20 + "px";
+        document.getElementById("ghost").style.left = ghost.x * 20 + "px";
+      }
+      function displayPacman() {
+        document.getElementById("pacman").style.top = pacman.y * 20 + "px";
+        document.getElementById("pacman").style.left = pacman.x * 20 + "px";
+      }
+      function displaySore() {
+        document.getElementById("score").innerHTML = score;
+      }
+      function rotatePacman(direction) {
+        if (direction === "left") {
+          // console.log("left rotation");
+          document.getElementById("pacman").style.transform = "rotate(180deg)";
+        } else if (direction === "right") {
+          // console.log("right rotation");
+          document.getElementById("pacman").style.transform = "rotate(0deg)";
+        } else if (direction === "up") {
+          // console.log("right rotation");
+          document.getElementById("pacman").style.transform = "rotate(270deg)";
+        } else if (direction === "down") {
+          // console.log("right rotation");
+          document.getElementById("pacman").style.transform = "rotate(90deg)";
+        }
+      }
+
+      displayWorld();
+      displayPacman();
+      displaySore();
+      displayGhost();
+
+      // MAKE PACMAN MOVE ----------------------
+      document.onkeydown = function (event) {
+        console.log(event.keyCode);
+        // LEFT ARROW ←
+        // what if x = 0 and looks for 0-1??
+        if (event.keyCode == 37 && world[pacman.y][pacman.x - 1] != 2) {
+          pacman.x--;
+          rotatePacman("left");
+          // document.getElementById("pacman").style.left = 40 + "px";
+        }
+        // right →
+        else if (event.keyCode == 39 && world[pacman.y][pacman.x + 1] != 2) {
+          pacman.x++;
+          rotatePacman("right");
+        }
+        // up ↑
+        else if (event.keyCode == 38 && world[pacman.y - 1][pacman.x] != 2) {
+          pacman.y--;
+          rotatePacman("up");
+        }
+        // down  ↓
+        else if (event.keyCode == 40 && world[pacman.y + 1][pacman.x] != 2) {
+          pacman.y++;
+          // pacman.y += 20;
+          rotatePacman("down");
+        }
+
+        // clear coin
+        if (world[pacman.y][pacman.x] === 1) {
+          world[pacman.y][pacman.x] = 0;
+          score += 10;
+          displaySore();
+          displayWorld();
+          coinCollectSound();
+        }
+        // clear Cherry
+        if (world[pacman.y][pacman.x] === 5) {
+          world[pacman.y][pacman.x] = 0;
+          score += 50;
+          displaySore();
+          displayWorld();
+          coinCollectCherry();
+        }
+
+        // if you encounter the ghost 👻
+        if (pacman.x == ghost.x && pacman.y == ghost.y) {
+          console.log("\n-----------------------------\n");
+          console.log("-> ghost.x", ghost.x, "pacman.x", pacman.x);
+          console.log("-> ghost.y", ghost.y, "pacman.y", pacman.y);
+          alert("you ran into the Ghost and LOST ⚠");
+          resetGame();
+        }
+
+        displayPacman();
+        displayGhost();
+      };
+
+      //MAKE GHOST MOVE ============================================
+      // Will execute myCallback every .5 second
+      var intervalID = window.setInterval(myCallbackGhostMove, 500);
+      function myCallbackGhostMove() {
+        // console.log("1 second has passed");
+        // don't move in brick
+        var randomMove = Math.floor(Math.random() * 2); // 0 or 1
+        console.log("r", randomMove);
+        // move LEFT - RIGHT if clear
+        if (randomMove == 0 && world[ghost.y][ghost.x - 1] != 2) {
+          ghost.x--;
+        } else if (randomMove == 0 && world[ghost.y][ghost.x + 1] != 2) {
+          ghost.x++;
+        } else if (randomMove == 1 && world[ghost.y - 1][ghost.x] != 2) {
+          ghost.y--;
+        } else if (randomMove == 1 && world[ghost.y + 1][ghost.x] != 2) {
+          ghost.y++;
+        }
+
+        // check if ghost got pacman
+        if (pacman.x == ghost.x && pacman.y == ghost.y) {
+          alert("THE GHOST GOT YOU! 👻");
+          resetGame();
+        }
+
+        displayGhost();
+        displayPacman();
+      }
+    </script>
+  </body>
+</html>
